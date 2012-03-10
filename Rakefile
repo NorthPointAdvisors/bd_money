@@ -15,7 +15,7 @@ require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
   gem.name = "bd_money"
-  gem.homepage = "http://github.com/aemadrid/bd_money"
+  gem.homepage = "http://github.com/NorthPointAdvisors/bd_money"
   gem.license = "MIT"
   gem.summary = %Q{Managing money objects sanely}
   gem.description = %Q{This library makes it easier to deal with Money values, storing them as BigDecimal to avoid floating-point math errors.}
