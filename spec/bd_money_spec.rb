@@ -190,6 +190,7 @@ describe Money do
       it { Money.new('0.0').should be_zero }
     end
   end
+
   describe "to_s" do
     describe "no decimals" do
       let(:amt) { '3' }
@@ -269,6 +270,22 @@ describe Money do
       it { subject.to_s(6).should == amt }
     end
   end
+
+  describe "format" do
+    let(:amt){ '1234567.12'}
+    let(:neg_amt){ '-1234567.12'}
+    it {subject.formatted().should == '$ 1,234,567.12'}
+    it {subject.formatted(:no_cents).should == '$ 1,234,567'}
+    it {subject.formatted(:no_commas).should == '$ 1234567.12'}
+    it {subject.formatted(:precision => 1).should == '$ 1,234,567.1'}
+    it {subject.formatted(:no_commas, :precision => 1).should == '$ 1234567.1'}
+    it {neg_subject.formatted().should == '$ -1,234,567.12'}
+    it {neg_subject.formatted(:no_cents).should == '$ -1,234,567'}
+    it {neg_subject.formatted(:no_commas).should == '$ -1234567.12'}
+    it {neg_subject.formatted(:precision => 1).should == '$ -1,234,567.1'}
+    it {neg_subject.formatted(:no_commas, :precision => 1).should == '$ -1234567.1'}
+  end
+
   describe "forwarded" do
     describe "power" do
       subject { Money.new(amt).power 2 }
@@ -276,6 +293,7 @@ describe Money do
       it { subject.to_s.should == '12.46' }
     end
   end
+
   describe "Rounding" do
     let(:pos_amt1) { Money.new '1.4' }
     let(:pos_amt2) { Money.new '1.5' }
