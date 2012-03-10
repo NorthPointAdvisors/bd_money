@@ -54,7 +54,8 @@ There is a rails extension that makes it easier to store money values in the dat
   require 'bd_money/rails'
 
   class Product < ActiveRecord::Base
-    money :price
+    money :cost, :price, :round_mode => :floor
+    validates_numericality_of :cost, :greater_than => 0
     validates_numericality_of :price, :greater_than => 0
   end
 

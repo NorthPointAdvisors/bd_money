@@ -15,8 +15,7 @@ end
 class DefaultLoanExample < ActiveRecord::Base
   set_table_name "money_examples"
 
-  money :amount
-  money :apr
+  money :amount, :apr
 end
 
 class BetterLoanExample < ActiveRecord::Base

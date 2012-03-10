@@ -22,17 +22,22 @@ module ActiveRecord #:nodoc:
       end
 
       module ClassMethods
-        def money(name, options = { })
-          define_method "#{name}=" do |value|
-            if value.present?
-              self[name] = ::Money.new(value, options[:precision], options[:round_mode]).amount
-            else
-              self[name] = nil
+        # Pass list of fields you want to use as Money. You can also pass a hash in the end to indicate your
+        # preferences for :precision and :round_mode.
+        def money(*names)
+          options = names.extract_options!
+          names.each do |name|
+            define_method "#{name}=" do |value|
+              if value.present?
+                self[name] = ::Money.new(value, options[:precision], options[:round_mode]).amount
+              else
+                self[name] = nil
+              end
             end
-          end
-          define_method "#{name}" do
-            return nil unless self[name].present?
-            ::Money.new self[name], options[:precision], options[:round_mode]
+            define_method "#{name}" do
+              return nil unless self[name].present?
+              ::Money.new self[name], options[:precision], options[:round_mode]
+            end
           end
         end
       end
