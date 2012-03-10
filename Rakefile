@@ -18,7 +18,7 @@ Jeweler::Tasks.new do |gem|
   gem.homepage = "http://github.com/aemadrid/bd_money"
   gem.license = "MIT"
   gem.summary = %Q{Managing money objects sanely}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.description = %Q{This library makes it easier to deal with Money values, storing them as BigDecimal to avoid floating-point math errors.}
   gem.email = "aemadrid@gmail.com"
   gem.authors = ["Adrian Madrid"]
   # dependencies defined in Gemfile
