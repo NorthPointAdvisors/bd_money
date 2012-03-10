@@ -22,7 +22,7 @@ module ActiveRecord #:nodoc:
       end
 
       module ClassMethods
-        def money(name, options = {})
+        def money(name, options = { })
           define_method "#{name}=" do |value|
             if value.present?
               self[name] = ::Money.new(value, options[:precision], options[:round_mode]).amount
@@ -31,7 +31,6 @@ module ActiveRecord #:nodoc:
             end
           end
           define_method "#{name}" do
-            puts "#{name} : self[#{name}] (1) : #{self[name]} : #{self[name].class}"
             return nil unless self[name].present?
             ::Money.new self[name], options[:precision], options[:round_mode]
           end
