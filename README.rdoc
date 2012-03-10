@@ -1,6 +1,86 @@
 = bd_money
 
-Description goes here.
+This library makes it easier to deal with Money values, storing them as BigDecimal to avoid floating-point
+math errors.
+
+This library makes extensive use of ideas borrowed from the Money[https://github.com/collectiveidea/money] gem
+from CollectiveIdea so please review their code and decide which gem to use according to your needs. We needed
+an object that would keep numbers with more precision internally and display them with smaller precision if
+required. Also we needed more control with regards to rounding methods.
+
+== Money
+
+Money objects use internally BigDecimal object to provide exact calculations.
+
+=== Precision
+
+You can decide how many decimals you want to display using the second parameter on initialization (nil will
+use the current Money class default).
+
+  m = Money.new 123.456789, 3  #=> 123.456
+  m.to_s(2)                    #=> 123.45
+
+You can change the default precision for display purposes:
+
+  Money.precision = 2
+  m = Money.new 123.456789, 3  #=> 123.456
+  m.precision = 1
+  m.to_s                       #=> 123.4
+  m.to_s(2)                    #=> 123.45
+
+== Rounding
+
+BigDecimal numbers provide several rounding methods: up, down, half_up, half_down, half_even, ceiling and floor.
+You can pass an option to decide what rounding method to use with your object.
+
+  m = Money.new 123.456, nil, :half_up
+  m.to_s(2)                    #=> 123.46
+  m.to_s(2, :floor)            #=> 123.45
+
+== Download
+
+Preferred method of installation is gem:
+
+  gem install bd_money
+
+You can find the source at:
+
+  http://github.com/NorthPointAdvisors/bd_money
+
+== Rails
+
+There is a rails extension that makes it easier to store money values in the database.
+
+  require 'bd_money/rails'
+
+  class Product < ActiveRecord::Base
+    money :price
+    validates_numericality_of :price, :greater_than => 0
+  end
+
+This assumes that there is a price (decimal highly recommended) column in the database.  You can also specify the
+:precision and :round_mode option for more fine control of the results.
+
+  class Loan < ActiveRecord::Base
+    money :amount, :round_mode => :half_up
+    money :apr, :precision => 5, :round_mode => :floor
+  end
+
+You can set the attribute to a String, Fixnum, or Float and it will call #to_money to
+convert it to a Money object.  This makes it convenient for using money fields in forms.
+
+  r = Loan.new :amount => "123.456", :apr => 0.123456
+  r.amount  #=> 123.46
+  r.apr     #=> 0.12345
+
+Also notice that operating on a Money object will return another money object to help you maintain the extra
+information in the BigDecimal amount.
+
+  twice = r.amount * 2 #=> 246.91
+  twice.class.name     #=> "Money"
+
+This has been tested with ActiveRecord 2.3.5. Please proceed with caution in any other environment. If you work out a
+solution for other versions please let me know.
 
 == Contributing to bd_money
  
@@ -12,8 +92,10 @@ Description goes here.
 * Make sure to add tests for it. This is important so I don't break it in a future version unintentionally.
 * Please try not to mess with the Rakefile, version, or history. If you want to have your own version, or is otherwise necessary, that is fine, but please isolate to its own commit so I can cherry-pick around it.
 
+== Code
+
+If you have any improvements please email them to aemadrid [at] gmail.com
+
 == Copyright
 
-Copyright (c) 2012 Adrian Madrid. See LICENSE.txt for
-further details.
-
+Copyright (c) 2012 North Point Advisors, Inc. See LICENSE.txt for further details.
