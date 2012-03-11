@@ -19,7 +19,7 @@ class Money
   } unless const_defined?(:FORMATS)
 
   REMOVE_RE = %r{[$,_ ]} unless const_defined?(:REMOVE_RE)
-  VALID_RE = %r{^(-)?(\d)+(\.\d{1,12})?$} unless const_defined?(:VALID_RE)
+  VALID_RE = %r{^(-)?(\d)+(\.\d{1,35})?$} unless const_defined?(:VALID_RE)
 
   include Comparable
 
