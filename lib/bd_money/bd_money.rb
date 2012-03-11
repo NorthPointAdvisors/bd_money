@@ -158,7 +158,7 @@ class Money
   end
 
   def to_f(this_precision = precision, this_round_mode = round_mode)
-    round_amount(this_precision, this_round_mode).to_i
+    round_amount(this_precision, this_round_mode).to_f
   end
 
   def to_s(this_precision = precision, this_round_mode = round_mode)

@@ -189,6 +189,30 @@ describe Money do
       it { Money.new('0').should be_zero }
       it { Money.new('0.0').should be_zero }
     end
+    describe "to_i" do
+      describe "positive" do
+        subject { Money.new(3.21).to_i }
+        it { subject.should == 3 }
+        it { subject.should be_a Integer }
+      end
+      describe "negative" do
+        subject { Money.new(-3.21).to_i }
+        it { subject.should == -3 }
+        it { subject.should be_a Integer }
+      end
+    end
+    describe "to_f" do
+      describe "positive" do
+        subject { Money.new(3.21).to_f }
+        it { subject.should == 3.21 }
+        it { subject.should be_a Float }
+      end
+      describe "negative" do
+        subject { Money.new(-3.21).to_f }
+        it { subject.should == -3.21 }
+        it { subject.should be_a Float }
+      end
+    end
   end
 
   describe "to_s" do
@@ -272,18 +296,18 @@ describe Money do
   end
 
   describe "format" do
-    let(:amt){ '1234567.12'}
-    let(:neg_amt){ '-1234567.12'}
-    it {subject.formatted().should == '$ 1,234,567.12'}
-    it {subject.formatted(:no_cents).should == '$ 1,234,567'}
-    it {subject.formatted(:no_commas).should == '$ 1234567.12'}
-    it {subject.formatted(:precision => 1).should == '$ 1,234,567.1'}
-    it {subject.formatted(:no_commas, :precision => 1).should == '$ 1234567.1'}
-    it {neg_subject.formatted().should == '$ -1,234,567.12'}
-    it {neg_subject.formatted(:no_cents).should == '$ -1,234,567'}
-    it {neg_subject.formatted(:no_commas).should == '$ -1234567.12'}
-    it {neg_subject.formatted(:precision => 1).should == '$ -1,234,567.1'}
-    it {neg_subject.formatted(:no_commas, :precision => 1).should == '$ -1234567.1'}
+    let(:amt) { '1234567.12' }
+    let(:neg_amt) { '-1234567.12' }
+    it { subject.formatted().should == '$ 1,234,567.12' }
+    it { subject.formatted(:no_cents).should == '$ 1,234,567' }
+    it { subject.formatted(:no_commas).should == '$ 1234567.12' }
+    it { subject.formatted(:precision => 1).should == '$ 1,234,567.1' }
+    it { subject.formatted(:no_commas, :precision => 1).should == '$ 1234567.1' }
+    it { neg_subject.formatted().should == '$ -1,234,567.12' }
+    it { neg_subject.formatted(:no_cents).should == '$ -1,234,567' }
+    it { neg_subject.formatted(:no_commas).should == '$ -1234567.12' }
+    it { neg_subject.formatted(:precision => 1).should == '$ -1,234,567.1' }
+    it { neg_subject.formatted(:no_commas, :precision => 1).should == '$ -1234567.1' }
   end
 
   describe "forwarded" do
