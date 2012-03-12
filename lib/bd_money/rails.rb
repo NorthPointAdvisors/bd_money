@@ -27,16 +27,22 @@ module ActiveRecord #:nodoc:
         def money(*names)
           options = names.extract_options!
           names.each do |name|
+            if options[:precision]
+              this_precision = options[:precision]
+            else
+              db_column      = columns.select { |x| x.name == name.to_s }.first
+              this_precision = (db_column && db_column.respond_to?(:scale)) ? db_column.scale : nil
+            end
             define_method "#{name}=" do |value|
               if value.present?
-                self[name] = ::Money.new(value, options[:precision], options[:round_mode]).amount
+                self[name] = ::Money.new(value, this_precision, options[:round_mode], options[:format]).round.amount
               else
                 self[name] = nil
               end
             end
             define_method "#{name}" do
               return nil unless self[name].present?
-              ::Money.new self[name], options[:precision], options[:round_mode]
+              ::Money.new self[name], this_precision, options[:round_mode], options[:format]
             end
           end
         end

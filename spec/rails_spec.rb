@@ -21,22 +21,25 @@ end
 class BetterLoanExample < ActiveRecord::Base
   set_table_name "money_examples"
 
-  money :amount, :precision => 2, :round_mode => :half_up
-  money :apr, :precision => 5, :round_mode => :floor
+  money :amount, :round_mode => :half_up, :format => :no_cents
+  money :apr, :precision => 4, :round_mode => :floor, :format => :no_commas
 end
 
 describe Money do
   describe "default settings" do
-    it "should allow dynamic finders to work with money objects" do
-      record = DefaultLoanExample.create! :amount => '325.75', :apr => '0.01234'
-      DefaultLoanExample.find_by_amount(0.to_money).should be_nil
-      found = DefaultLoanExample.find_by_amount('325.75'.to_money)
-      found.should == record
-      found.amount.should be_a(Money)
-      found.amount.to_s.should == '325.75'
-      found.apr.should be_a(Money)
-      found.apr.to_s.should == '0.01'
-    end
+    before(:all) { @record = BetterLoanExample.create! :amount => '325.75', :apr => '0.01234' }
+    subject { BetterLoanExample.find_by_amount('325.75'.to_money) }
+    it { BetterLoanExample.find_by_amount(0.to_money).should be_nil }
+    it { subject.id.should == @record.id }
+    it { subject.amount.should be_a(Money) }
+    it { subject.amount.to_s.should == '325.75' }
+    it { subject.amount.format.should == :no_cents }
+    it { subject.amount.formatted.should == '$ 325.75' }
+    it { subject.apr.should be_a(Money) }
+    it { subject.apr.to_s.should == '0.0123' }
+    it { subject.apr.format.should == :no_commas }
+    it { subject.apr.formatted.should == '$ 0.01' }
+    it { subject.apr.formatted(:precision => 3, :unit => "", :spacer => "").should == '0.012' }
   end
   describe "custom settings" do
     it "should allow dynamic finders to work with money objects" do
@@ -47,7 +50,7 @@ describe Money do
       found.amount.should be_a(Money)
       found.amount.to_s.should == '123.45'
       found.apr.should be_a(Money)
-      found.apr.to_s.should == '0.01234'
+      found.apr.to_s.should == '0.0123'
     end
   end
   describe "setter method" do
@@ -71,6 +74,12 @@ describe Money do
       me = DefaultLoanExample.new :amount => 500.to_money
       me.update_attribute :amount, nil
       me.amount.should be_nil
+    end
+
+    describe "should round numbers to the column's' precision" do
+      subject { BetterLoanExample.new :amount => 300, :apr => 0.123456789 }
+      it { subject.amount.amount.to_s('F').should == '300.0' }
+      it { subject.apr.amount.to_s('F').should == '0.1234' }
     end
   end
 end

@@ -14,9 +14,10 @@ class Money
   } unless const_defined?(:ROUND_MODES)
 
   FORMATS = {
-    :default   => { :unit => "$", :spacer => " ", :delimiter => ",", :separator => ".", :precision => 2 },
-    :no_cents  => { :unit => "$", :spacer => " ", :delimiter => ",", :separator => ".", :precision => 0 },
-    :no_commas => { :unit => "$", :spacer => " ", :delimiter => "", :separator => ".", :precision => 2 },
+    :default   => { :unit => "$", :spacer => " ", :delimiter => ",", :separator => ".", :precision => 2, :last => "" },
+    :no_cents  => { :unit => "$", :spacer => " ", :delimiter => ",", :separator => ".", :precision => 0, :last => "" },
+    :no_commas => { :unit => "$", :spacer => " ", :delimiter => "", :separator => ".", :precision => 2, :last => "" },
+    :general   => { :unit => "", :spacer => "", :delimiter => "", :separator => ".", :precision => 2, :last => "" },
   } unless const_defined?(:FORMATS)
 
   REMOVE_RE = %r{[$,_ ]} unless const_defined?(:REMOVE_RE)
@@ -78,8 +79,8 @@ class Money
     @format || self.class.format
   end
 
-  def convert(value)
-    self.class.convert value
+  def convert(value, this_precision = precision, this_round_mode = round_mode)
+    self.class.convert value, this_precision, this_round_mode
   end
 
   def eql?(other)
@@ -186,15 +187,16 @@ class Money
     spacer    = options[:spacer] || defaults[:spacer]
     delimiter = options[:delimiter] || defaults[:delimiter]
     separator = options[:separator] || defaults[:separator]
-    precision = options[:precision] || defaults[:precision]
     separator = '' if precision == 0
+    precision = options[:precision] || defaults[:precision]
+    last      = options[:last] || defaults[:last]
 
     number = to_s precision
     begin
       parts = number.to_s.split('.')
       parts[0].gsub!(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1#{delimiter}")
       number = parts.join(separator)
-      "#{unit}#{spacer}#{number}"
+      "#{unit}#{spacer}#{number}#{last}"
     rescue
       number
     end
@@ -257,9 +259,8 @@ class Money
       @format || :default
     end
 
-    def convert(value)
-      return value if value.is_a?(Money)
-      new value
+    def convert(value, precision = nil, round_mode = nil)
+      new value, precision, round_mode
     end
 
     def clean(value)

@@ -59,13 +59,23 @@ There is a rails extension that makes it easier to store money values in the dat
     validates_numericality_of :price, :greater_than => 0
   end
 
-This assumes that there is a price (decimal highly recommended) column in the database.  You can also specify the
-:precision and :round_mode option for more fine control of the results.
+This assumes that there is a price (decimal highly recommended) column in the database.
+
+You can also specify the :precision, :round_mode and :format options for more fine control of the results. If you don't
+specify the :precision option it will try to guess it out of the scale column definition (recommended). Precision is
+important since the values will get rounded on every change internally to stay consistent with the database.
 
   class Loan < ActiveRecord::Base
-    money :amount, :round_mode => :half_up
-    money :apr, :precision => 5, :round_mode => :floor
+    money :amount, :round_mode => :half_up, :format => :no_cents
+    money :apr, :precision => 5, :round_mode => :floor, :format => :no_commas
   end
+
+  loan = Loan.create! :amount => '325.75', :apr => '0.01234'
+  loan.amount                                                       #=> 325.75
+  loan.amount.formatted                                             #=> $ 325.75
+  loan.apr                                                          #=> 0.0123
+  loan.apr.formatted                                                #=> $ 0.01
+  loan.apr.formatted(:precision => 5, :unit => "", :spacer => "")   #=> 0.01234
 
 You can set the attribute to a String, Fixnum, or Float and it will call #to_money to
 convert it to a Money object.  This makes it convenient for using money fields in forms.
