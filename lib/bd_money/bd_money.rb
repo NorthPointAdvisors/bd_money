@@ -20,7 +20,7 @@ class Money
   } unless const_defined?(:FORMATS)
 
   REMOVE_RE = %r{[$,_ ]} unless const_defined?(:REMOVE_RE)
-  VALID_RE = %r{^(-)?(\d)+(\.\d{1,35})?$} unless const_defined?(:VALID_RE)
+  VALID_RE = %r{^(-)?(\d)+(\.\d{1,30}(e-\d{1,10})?)?$} unless const_defined?(:VALID_RE)
 
   YAML_TYPE_CLASS = 'npadv.com,2012-03-12' unless const_defined?(:YAML_TYPE_CLASS)
   YAML_TYPE_MODE = 'money' unless const_defined?(:YAML_TYPE_MODE)

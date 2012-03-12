@@ -65,6 +65,8 @@ describe Money do
     it { Money.valid?('.01').should_not be_true }
     it { Money.valid?('-0.01').should be_true }
     it { Money.valid?('-.01').should_not be_true }
+    it { Money.valid?('1.0e-05').should be_true }
+    it { Money.valid?('-1.0e-05').should be_true }
   end
 
   describe "initialize" do
