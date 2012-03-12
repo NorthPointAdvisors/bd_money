@@ -22,9 +22,8 @@ class Money
   REMOVE_RE = %r{[$,_ ]} unless const_defined?(:REMOVE_RE)
   VALID_RE = %r{^(-)?(\d)+(\.\d{1,30}(e-\d{1,10})?)?$} unless const_defined?(:VALID_RE)
 
-  YAML_TYPE_CLASS = 'npadv.com,2012-03-12' unless const_defined?(:YAML_TYPE_CLASS)
-  YAML_TYPE_MODE = 'money' unless const_defined?(:YAML_TYPE_MODE)
-  YAML_TYPE_FULL = "#{YAML_TYPE_CLASS}/#{YAML_TYPE_MODE}" unless const_defined?(:YAML_TYPE_FULL)
+  YAML_TYPE_ROOT = 'npadv.com,2012-03-12' unless const_defined?(:YAML_TYPE_ROOT)
+  YAML_TYPE_NAME = 'money' unless const_defined?(:YAML_TYPE_NAME)
 
   include Comparable
 
@@ -215,7 +214,7 @@ class Money
   end
 
   def to_yaml_type
-    "!#{YAML_TYPE_FULL}"
+    "!#{YAML_TYPE_ROOT}/#{YAML_TYPE_NAME}"
   end
 
   def to_yaml(options = { })
@@ -275,6 +274,6 @@ class Money
 
 end
 
-YAML::add_domain_type(Money::YAML_TYPE_CLASS, Money::YAML_TYPE_MODE) do |_, map|
+YAML::add_domain_type(Money::YAML_TYPE_ROOT, Money::YAML_TYPE_NAME) do |_, map|
   Money.new map['amount'], map['precision'], map['round_mode'], map['format']
 end
