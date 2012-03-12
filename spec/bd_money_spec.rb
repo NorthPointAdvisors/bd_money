@@ -383,4 +383,11 @@ describe Money do
     end
   end
 
+  describe "YAML support" do
+    subject { Money.new amt, 2, :floor, :no_commas }
+    let(:yaml_str) { %{--- !npadv.com,2012-03-12/money \namount: "3.53"\nprecision: 2\nround_mode: :floor\nformat: :no_commas\n} }
+    it { subject.to_yaml.should == yaml_str }
+    it { YAML.load(yaml_str).should == subject }
+  end
+
 end

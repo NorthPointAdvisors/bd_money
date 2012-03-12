@@ -1,4 +1,5 @@
 require 'bigdecimal'
+require 'yaml'
 
 class Money
 
@@ -20,6 +21,10 @@ class Money
 
   REMOVE_RE = %r{[$,_ ]} unless const_defined?(:REMOVE_RE)
   VALID_RE = %r{^(-)?(\d)+(\.\d{1,35})?$} unless const_defined?(:VALID_RE)
+
+  YAML_TYPE_CLASS = 'npadv.com,2012-03-12' unless const_defined?(:YAML_TYPE_CLASS)
+  YAML_TYPE_MODE = 'money' unless const_defined?(:YAML_TYPE_MODE)
+  YAML_TYPE_FULL = "#{YAML_TYPE_CLASS}/#{YAML_TYPE_MODE}" unless const_defined?(:YAML_TYPE_FULL)
 
   include Comparable
 
@@ -176,7 +181,7 @@ class Money
 
   def formatted(*args)
     defaults = args.first.is_a?(::Symbol) ? FORMATS[args.shift] : FORMATS[:default]
-    options = args.last.is_a?(::Hash) ? args.pop : { }
+    options  = args.last.is_a?(::Hash) ? args.pop : { }
 
     unit      = options[:unit] || defaults[:unit]
     spacer    = options[:spacer] || defaults[:spacer]
@@ -206,6 +211,21 @@ class Money
       result.is_a?(::BigDecimal) ? convert(result) : result
     else
       super
+    end
+  end
+
+  def to_yaml_type
+    "!#{YAML_TYPE_FULL}"
+  end
+
+  def to_yaml(options = { })
+    YAML.quick_emit(self.object_id, options) do |out|
+      out.map(taguri, to_yaml_style) do |map|
+        map.add 'amount', amount.to_s('F')
+        map.add 'precision', @precision unless @precision.nil?
+        map.add 'round_mode', @round_mode unless @round_mode.nil?
+        map.add 'format', @format unless @format.nil?
+      end
     end
   end
 
@@ -253,4 +273,8 @@ class Money
 
   end
 
+end
+
+YAML::add_domain_type(Money::YAML_TYPE_CLASS, Money::YAML_TYPE_MODE) do |_, map|
+  Money.new map['amount'], map['precision'], map['round_mode'], map['format']
 end
