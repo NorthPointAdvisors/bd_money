@@ -305,11 +305,13 @@ describe Money do
     it { subject.formatted(:no_commas).should == '$ 1234567.12' }
     it { subject.formatted(:precision => 1).should == '$ 1,234,567.1' }
     it { subject.formatted(:no_commas, :precision => 1).should == '$ 1234567.1' }
+    it { subject.formatted(:general, :last => '%').should == '1234567.12%' }
     it { neg_subject.formatted().should == '$ -1,234,567.12' }
     it { neg_subject.formatted(:no_cents).should == '$ -1,234,567' }
     it { neg_subject.formatted(:no_commas).should == '$ -1234567.12' }
     it { neg_subject.formatted(:precision => 1).should == '$ -1,234,567.1' }
     it { neg_subject.formatted(:no_commas, :precision => 1).should == '$ -1234567.1' }
+    it { neg_subject.formatted(:general, :last => '%').should == '-1234567.12%' }
   end
 
   describe "forwarded" do
