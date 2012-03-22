@@ -297,6 +297,15 @@ describe Money do
     end
   end
 
+  describe "to_big_decimal" do
+    let(:bd_amt) { BigDecimal.new(amt) }
+    it { bd_amt.should == subject.to_big_decimal }
+  end
+
+  describe "to_money" do
+    it { should == subject.to_money }
+  end
+
   describe "format" do
     let(:amt) { '1234567.12' }
     let(:neg_amt) { '-1234567.12' }
@@ -306,12 +315,14 @@ describe Money do
     it { subject.formatted(:precision => 1).should == '$ 1,234,567.1' }
     it { subject.formatted(:no_commas, :precision => 1).should == '$ 1234567.1' }
     it { subject.formatted(:general, :last => '%').should == '1234567.12%' }
+    it { subject.formatted(:general, :spacer => " ", :last => '%').should == '1234567.12%' }
     it { neg_subject.formatted().should == '$ -1,234,567.12' }
     it { neg_subject.formatted(:no_cents).should == '$ -1,234,567' }
     it { neg_subject.formatted(:no_commas).should == '$ -1234567.12' }
     it { neg_subject.formatted(:precision => 1).should == '$ -1,234,567.1' }
     it { neg_subject.formatted(:no_commas, :precision => 1).should == '$ -1234567.1' }
     it { neg_subject.formatted(:general, :last => '%').should == '-1234567.12%' }
+    it { neg_subject.formatted(:general, :spacer => " ", :last => '%').should == '-1234567.12%' }
   end
 
   describe "forwarded" do

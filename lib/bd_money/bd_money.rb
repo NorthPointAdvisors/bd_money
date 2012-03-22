@@ -39,7 +39,9 @@ class Money
   end
 
   def amount=(value)
-    if value.is_a?(BigDecimal)
+    if value.respond_to?(:to_big_decimal)
+      @amount = value.to_big_decimal
+    elsif value.is_a?(BigDecimal)
       @amount = value
     else
       str = self.class.clean value
@@ -149,6 +151,14 @@ class Money
     amount == 0
   end
 
+  def to_money
+    self
+  end
+
+  def to_big_decimal
+    amount
+  end
+
   def round_amount(this_precision = precision, this_round_mode = round_mode)
     this_round_mode = BigDecimal.const_get("ROUND_#{this_round_mode.to_s.upcase}") if this_round_mode.is_a?(Symbol)
     amount.round this_precision, this_round_mode
@@ -183,8 +193,9 @@ class Money
     defaults = args.first.is_a?(::Symbol) ? FORMATS[args.shift] : FORMATS[:default]
     options  = args.last.is_a?(::Hash) ? args.pop : { }
 
-    unit      = options[:unit] || defaults[:unit]
-    spacer    = options[:spacer] || defaults[:spacer]
+    unit   = options[:unit] || defaults[:unit]
+    spacer = options[:spacer] || defaults[:spacer]
+    spacer = '' if unit.to_s.empty?
     delimiter = options[:delimiter] || defaults[:delimiter]
     separator = options[:separator] || defaults[:separator]
     separator = '' if precision == 0
