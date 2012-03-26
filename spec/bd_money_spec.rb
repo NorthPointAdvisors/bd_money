@@ -7,6 +7,7 @@ describe Money do
   let(:other_amt) { 1.01 }
   subject { Money.new amt, 2, :half_down }
   let(:neg_subject) { Money.new neg_amt, 2, :half_down }
+  let(:nan_subject) { Money.new(0) / 0 }
 
   describe "class precision" do
     it { Money.precision.should == 2 }
@@ -295,6 +296,9 @@ describe Money do
       it { subject.to_s(5).should == amt[0, 7] }
       it { subject.to_s(6).should == amt }
     end
+    describe "not a number" do
+      it { nan_subject.to_s.should == "NaN" }
+    end
   end
 
   describe "to_big_decimal" do
@@ -309,6 +313,7 @@ describe Money do
   describe "format" do
     let(:amt) { '1234567.12' }
     let(:neg_amt) { '-1234567.12' }
+    let(:nan) { Money.new(0) / 0 }
     it { subject.formatted().should == '$ 1,234,567.12' }
     it { subject.formatted(:no_cents).should == '$ 1,234,567' }
     it { subject.formatted(:no_commas).should == '$ 1234567.12' }
@@ -323,6 +328,9 @@ describe Money do
     it { neg_subject.formatted(:no_commas, :precision => 1).should == '$ -1234567.1' }
     it { neg_subject.formatted(:general, :last => '%').should == '-1234567.12%' }
     it { neg_subject.formatted(:general, :spacer => " ", :last => '%').should == '-1234567.12%' }
+    it { nan_subject.formatted().should == 'NaN' }
+    it { nan_subject.formatted(:no_cents).should == 'NaN' }
+    it { nan_subject.formatted(:no_commas, :precision => 1).should == 'NaN' }
   end
 
   describe "forwarded" do

@@ -178,8 +178,9 @@ class Money
 
   def to_s(this_precision = precision, this_round_mode = round_mode)
     amount_str     = round_amount(this_precision, this_round_mode).to_s('F')
+    return amount_str if amount_str == "NaN"
     dollars, cents = amount_str.split('.')
-    return dollars if this_precision == 0
+    return dollars if this_precision == 0 || cents.nil?
     if cents.size >= this_precision
       "#{dollars}.#{cents[0, this_precision]}"
     else
@@ -203,6 +204,7 @@ class Money
     last      = options[:last] || defaults[:last]
 
     number = to_s precision
+    return number if number == 'NaN'
     begin
       parts = number.to_s.split('.')
       parts[0].gsub!(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1#{delimiter}")
