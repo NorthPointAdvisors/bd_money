@@ -68,6 +68,18 @@ describe Money do
     it { Money.valid?('-.01').should_not be_true }
     it { Money.valid?('1.0e-05').should be_true }
     it { Money.valid?('-1.0e-05').should be_true }
+    it { Money.valid?('610.727274321917808219178082191780821917808219178082191780821917808219178082191765').should be_true }
+  end
+
+  describe "class zero" do
+    it { Money.zero.should == Money.new(0) }
+  end
+
+  describe "class []" do
+    it { Money[amt].should == Money.new(amt) }
+    it { Money[neg_amt].should == Money.new(neg_amt) }
+    it { Money[other_amt].should == Money.new(other_amt) }
+    it { Money[3.53].should == Money.new(3.53) }
   end
 
   describe "initialize" do
