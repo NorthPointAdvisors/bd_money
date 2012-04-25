@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Adrian Madrid"]
-  s.date = %q{2012-04-05}
+  s.date = %q{2012-04-25}
   s.description = %q{This library makes it easier to deal with Money values, storing them as BigDecimal to avoid floating-point math errors.}
   s.email = %q{aemadrid@gmail.com}
   s.extra_rdoc_files = [
