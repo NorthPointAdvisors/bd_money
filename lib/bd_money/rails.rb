@@ -12,6 +12,11 @@ class Money
     amount
   end
 
+  # For better json decoding
+  def as_json(options = nil)
+    to_s
+  end
+
 end
 
 module ActiveRecord #:nodoc:

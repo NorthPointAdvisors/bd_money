@@ -190,7 +190,7 @@ class Money
 
   alias :inspect :to_s
 
-  def to_json
+  def to_json(options = nil)
     to_s
   end
 

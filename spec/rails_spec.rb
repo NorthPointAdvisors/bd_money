@@ -81,5 +81,14 @@ describe Money do
       it { subject.amount.amount.to_s('F').should == '300.0' }
       it { subject.apr.amount.to_s('F').should == '0.1234' }
     end
+
+    describe "should provide valid json encoding" do
+      subject { BetterLoanExample.new :amount => 300, :apr => 0.123456789 }
+      it { subject.amount.as_json.should == '300.00' }
+      it { subject.apr.as_json.should == '0.1234' }
+      it { subject.as_json.should == {"apr"=>0.1234, "amount"=>300.00} }
+      it { subject.to_json.should == '{"apr":0.1234,"amount":300.00}' }
+    end
+
   end
 end
