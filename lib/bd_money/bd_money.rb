@@ -190,6 +190,10 @@ class Money
 
   alias :inspect :to_s
 
+  def to_json
+    to_s
+  end
+
   def formatted(*args)
     defaults = args.first.is_a?(::Symbol) ? FORMATS[args.shift] : FORMATS[:default]
     options  = args.last.is_a?(::Hash) ? args.pop : { }

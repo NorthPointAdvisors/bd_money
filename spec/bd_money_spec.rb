@@ -313,6 +313,40 @@ describe Money do
     end
   end
 
+  describe "to_json" do
+    describe "no decimals" do
+      let(:amt) { '3' }
+      it { subject.to_json.should == "#{amt}.00" }
+    end
+    describe "one decimal" do
+      let(:amt) { '3.5' }
+      it { subject.to_json.should == "#{amt}0" }
+    end
+    describe "two decimals" do
+      let(:amt) { '3.53' }
+      it { subject.to_json.should == amt }
+    end
+    describe "three decimals" do
+      let(:amt) { '3.534' }
+      it { subject.to_json.should == amt[0, 4] }
+    end
+    describe "four decimals" do
+      let(:amt) { '3.5343' }
+      it { subject.to_json.should == amt[0, 4] }
+    end
+    describe "five decimals" do
+      let(:amt) { '3.53434' }
+      it { subject.to_json.should == amt[0, 4] }
+    end
+    describe "six decimals" do
+      let(:amt) { '3.534343' }
+      it { subject.to_json.should == amt[0, 4] }
+    end
+    describe "not a number" do
+      it { nan_subject.to_json.should == "NaN" }
+    end
+  end
+
   describe "to_big_decimal" do
     let(:bd_amt) { BigDecimal.new(amt) }
     it { bd_amt.should == subject.to_big_decimal }
